@@ -2,10 +2,11 @@ import sqlite3
 connection = sqlite3.connect('my_database.db')
 cursor = connection.cursor()
 cursor.execute('SELECT * FROM Users')
-users = cursor.fetchall()
+one = cursor.fetchone()
+print(one)
 
-for user in users:
-    print(user)
+first = cursor.fetchmany(5)
+print(first)
 
-connection.close()
-
+alld = cursor.fetchall()
+print(alld)

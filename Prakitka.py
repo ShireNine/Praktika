@@ -1,27 +1,53 @@
+##
 ##import sqlite3
 ##connection = sqlite3.connect('my_database.db')
 ##cursor = connection.cursor()
+##query = ('SELECT * FROM Users WHERE age > ?')
+##cursor.execute(query,(25,))
+##users = cursor.fetchall()
 ##
-##try:
-##    cursor.execute('BEGIN')
-##    cursor.execute('INSERT INTO Users(username, email) VALUES (?, ?)', ('user2', 'ewrwrew@fdfd'))
-##
-##    cursor.execute('COMMIT')
-##
-##except:
-##    cursor.execute('ROLLBACK')
+##for user in users:
+##    print(user)
 ##
 ##connection.close()
 
 
+##import sqlite3
+##connection = sqlite3.connect('my_database.db')
+##cursor = connection.cursor()
+##cursor.execute('CREATE VIEW ActiveUsers AS SELECT * FROM Users WHERE is_active = 1')
+##cursor.execute('SELECT * FROM ActiveUsers')
+##active_users = cursor.fetchall()
+##
+##for user in active_users:
+##    print(user)
+##
+##connection.close()
+
+##import sqlite3
+##connection = sqlite3.connect('my_database.db')
+##cursor = connection.cursor()
+##cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
+##id INTEGER PRIMARY KEY,
+##username TEXT NOT NULL,
+##email TEXT NOT NULL,
+##age INTEGER,
+##created_at TIMESTAMP DEFUALT CURRENT_TIMESTAMP
+##)''')
+##
+##cursor.execute('''
+##CREATE TRIGGER IF NOT EXISTS update_created_at
+##AFTER INSERT ON Users
+##BEGIN
+##UPDATE Users SET created_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+##END;
+##''')
+##connection.commit()
+##connection.close()
+
 import sqlite3
 connection = sqlite3.connect('my_database.db')
 cursor = connection.cursor()
-
-try:
-    with connection:
-        cursor.execute('INSERT INTO Users(username, email) VALUES (?, ?)', ('users3', 'fsdsf@mail0110'))
-        cursor.execute('INSERT INTO Users(username, email) VALUES (?, ?)', ('users4', 'fsdsf@mail00'))
-except:
-    pass
-        
+cursor.execute('CREATE INDEX idx_username ON Users (username)')
+connection.commit()
+connection.close()

@@ -1,53 +1,45 @@
-##
-##import sqlite3
-##connection = sqlite3.connect('my_database.db')
-##cursor = connection.cursor()
-##query = ('SELECT * FROM Users WHERE age > ?')
-##cursor.execute(query,(25,))
-##users = cursor.fetchall()
-##
-##for user in users:
-##    print(user)
-##
-##connection.close()
-
-
-##import sqlite3
-##connection = sqlite3.connect('my_database.db')
-##cursor = connection.cursor()
-##cursor.execute('CREATE VIEW ActiveUsers AS SELECT * FROM Users WHERE is_active = 1')
-##cursor.execute('SELECT * FROM ActiveUsers')
-##active_users = cursor.fetchall()
-##
-##for user in active_users:
-##    print(user)
-##
-##connection.close()
-
-##import sqlite3
-##connection = sqlite3.connect('my_database.db')
-##cursor = connection.cursor()
-##cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
-##id INTEGER PRIMARY KEY,
-##username TEXT NOT NULL,
-##email TEXT NOT NULL,
-##age INTEGER,
-##created_at TIMESTAMP DEFUALT CURRENT_TIMESTAMP
-##)''')
-##
-##cursor.execute('''
-##CREATE TRIGGER IF NOT EXISTS update_created_at
-##AFTER INSERT ON Users
-##BEGIN
-##UPDATE Users SET created_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
-##END;
-##''')
-##connection.commit()
-##connection.close()
-
 import sqlite3
-connection = sqlite3.connect('my_database.db')
+
+connection = sqlite3.connect('tasks.db')
 cursor = connection.cursor()
-cursor.execute('CREATE INDEX idx_username ON Users (username)')
-connection.commit()
+
+cursor.execute('DROP TABLE IF EXISTS Task')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Task(
+    id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    status TEXT DEFAULT 'Not Started'
+)
+''')
+
+
+def add_task(title):
+    cursor.execute('INSERT INTO Task(title) VALUES (?)', (title,))
+    connection.commit()
+
+
+def update_list(task_id, status):
+    cursor.execute('UPDATE Task SET status = ? WHERE id = ?', (status, task_id))
+    connection.commit()
+
+
+def list_task():
+    cursor.execute('SELECT * FROM Task')
+    tasks = cursor.fetchall()
+    for task in tasks:
+        print(task)
+
+
+add_task('Подготовить презентацию')
+add_task('Закончить отчёт')
+add_task('Приготовить ужин')
+
+
+update_list(2, 'In Progress')
+
+
+list_task()
+
+
 connection.close()
